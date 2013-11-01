@@ -119,6 +119,7 @@
           default:
             break;
           }
+          s = s + 'transition: width 300ms;'
           function addStyle(body_height) {
             angular.element('#ekathuwaSt' + op.id).remove();
             var mq = '#' + op.id + ' .modal-body { height: ' + body_height + '; overflow: auto; margin-right: 1px; }';
@@ -136,9 +137,13 @@
             }
             return max_height + "px";
           }
+          // Add styles initially.
+          addStyle(calculateBodyHeight($(window).height()));
+          // Add style every time the window is resized.
           window.onresize = function(){
             addStyle(calculateBodyHeight($(window).height()));
           };
+          // Add styles again after content has been appended.
           $timeout(function () {
             addStyle(calculateBodyHeight($(window).height()));
           }, 500);
