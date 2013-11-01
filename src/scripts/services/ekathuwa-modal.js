@@ -127,9 +127,14 @@
           }
           function calculateBodyHeight(window_height) {
             var header_height = angular.element('#' + op.id + ' .modal-header').outerHeight() || 60;
+            var body_height = angular.element('#' + op.id + ' .modal-body').outerHeight() || 200;
             var footer_height = angular.element('#' + op.id + ' .modal-footer').outerHeight() || 60;
             var padding_top_bottom = 40 + 40;
-            return (window_height - (header_height + footer_height + padding_top_bottom)) + "px";
+            var max_height = (window_height - (header_height + footer_height + padding_top_bottom));
+            if (body_height < max_height) {
+              return "auto";
+            }
+            return max_height + "px";
           }
           window.onresize = function(){
             addStyle(calculateBodyHeight($(window).height()));

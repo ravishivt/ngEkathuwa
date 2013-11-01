@@ -121,9 +121,29 @@
             default:
               break;
             }
-            var mq = '#' + op.id + ' .modal-dialog { ' + s + '} @media (max-width: 768px) {' + '#' + op.id + ' .modal-dialog {width:90%;}}';
-            angular.element('#ekathuwaSt' + op.id).remove();
-            angular.element('head').append('<style id="ekathuwaSt' + op.id + '">' + mq + '</style>');
+            function addStyle(body_height) {
+              angular.element('#ekathuwaSt' + op.id).remove();
+              var mq = '#' + op.id + ' .modal-body { height: ' + body_height + '; overflow: auto; margin-right: 1px; }';
+              mq = mq + ' #' + op.id + ' .modal-dialog { ' + s + '} @media (max-width: 768px) {' + '#' + op.id + ' .modal-dialog {width:90%;} #' + op.id + ' .modal-body { height: auto; overflow: visible; }}';
+              angular.element('head').append('<style id="ekathuwaSt' + op.id + '">' + mq + '</style>');
+            }
+            function calculateBodyHeight(window_height) {
+              var header_height = angular.element('#' + op.id + ' .modal-header').outerHeight() || 60;
+              var body_height = angular.element('#' + op.id + ' .modal-body').outerHeight() || 200;
+              var footer_height = angular.element('#' + op.id + ' .modal-footer').outerHeight() || 60;
+              var padding_top_bottom = 40 + 40;
+              var max_height = window_height - (header_height + footer_height + padding_top_bottom);
+              if (body_height < max_height) {
+                return 'auto';
+              }
+              return max_height + 'px';
+            }
+            window.onresize = function () {
+              addStyle(calculateBodyHeight($(window).height()));
+            };
+            $timeout(function () {
+              addStyle(calculateBodyHeight($(window).height()));
+            }, 500);
             angular.element('#' + op.id).remove();
             var m = angular.element(t);
             angular.element('body').append(m);
