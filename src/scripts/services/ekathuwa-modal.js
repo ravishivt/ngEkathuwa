@@ -137,16 +137,6 @@
             }
             return max_height + "px";
           }
-          // Add styles initially.
-          addStyle(calculateBodyHeight($(window).height()));
-          // Add style every time the window is resized.
-          window.onresize = function(){
-            addStyle(calculateBodyHeight($(window).height()));
-          };
-          // Add styles again after content has been appended.
-          $timeout(function () {
-            addStyle(calculateBodyHeight($(window).height()));
-          }, 500);
           angular.element('#' + op.id).remove();
           var m = angular.element(t);
           angular.element('body').append(m);
@@ -159,6 +149,17 @@
           } else {
             deferred.resolve(angular.element(modSelector).modal(btOPs));
           }
+          // Add styles immediately after modal is "shown".
+          angular.element(modSelector).on('shown.bs.modal', function (e) {
+            if (e.target != this) {
+              return;
+            }
+            addStyle(calculateBodyHeight($(window).height()));
+          });
+          // Add style every time the window is resized.
+          window.onresize = function(){
+            addStyle(calculateBodyHeight($(window).height()));
+          };
           return deferred.promise;
         };
         return this;
