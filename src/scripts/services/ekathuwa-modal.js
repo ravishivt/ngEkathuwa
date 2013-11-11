@@ -7,14 +7,17 @@
  */
 (function (window, document, undefined) {
   'use strict';
-  angular.module('ngEkathuwa', ['ngRoute']);
-  angular.module('ngEkathuwa', ['ngRoute']).run([
+  angular.module('ngEkathuwa', [])
+
+  .run([
     '$rootScope',
     '$ekathuwa',
     function ($rootScope, $ekathuwa) {
       $rootScope.$ekathuwa = $ekathuwa;
     }
-  ]).provider('$ekathuwa', function () {
+  ])
+
+  .provider('$ekathuwa', function () {
     this.$get = [
       '$compile',
       '$rootScope',
@@ -120,16 +123,16 @@
             break;
           }
           s = s + 'transition: width 300ms;'
-          function addStyle(body_height) {
-            angular.element('#ekathuwaSt' + op.id).remove();
-            var mq = '#' + op.id + ' .modal-body { height: ' + body_height + '; overflow: auto; margin-right: 1px; }';
-            mq = mq + ' #' + op.id + ' .modal-dialog { ' + s + '} @media (max-width: 768px) {' + '#' + op.id + ' .modal-dialog {width:90%;} #' + op.id + ' .modal-body { height: auto; overflow: visible; }}';
-            angular.element('head').append('<style id="ekathuwaSt' + op.id + '">' + mq + '</style>');
+          function addStyle(body_height, id) {
+            angular.element('#ekathuwaSt' + id).remove();
+            var mq = '#' + id + ' .modal-body { height: ' + body_height + '; overflow: auto; margin-right: 1px; }';
+            mq = mq + ' #' + id + ' .modal-dialog { ' + s + '} @media (max-width: 768px) {' + '#' + id + ' .modal-dialog {width:90%;} #' + id + ' .modal-body { height: auto; overflow: visible; }}';
+            angular.element('head').append('<style id="ekathuwaSt' + id + '">' + mq + '</style>');
           }
-          function calculateBodyHeight(window_height) {
-            var header_height = angular.element('#' + op.id + ' .modal-header').outerHeight() || 60;
-            var body_height = angular.element('#' + op.id + ' .modal-body').outerHeight() || 200;
-            var footer_height = angular.element('#' + op.id + ' .modal-footer').outerHeight() || 60;
+          function calculateBodyHeight(window_height, id) {
+            var header_height = angular.element('#' + id + ' .modal-header').outerHeight() || 60;
+            var body_height = angular.element('#' + id + ' .modal-body').outerHeight() || 200;
+            var footer_height = angular.element('#' + id + ' .modal-footer').outerHeight() || 60;
             var padding_top_bottom = 40 + 40;
             var max_height = (window_height - (header_height + footer_height + padding_top_bottom));
             if (body_height < max_height) {
@@ -154,11 +157,13 @@
             if (e.target != this) {
               return;
             }
-            addStyle(calculateBodyHeight($(window).height()));
+            addStyle(calculateBodyHeight($(window).height(), op.id), op.id);
           });
           // Add style every time the window is resized.
           window.onresize = function(){
-            addStyle(calculateBodyHeight($(window).height()));
+            angular.forEach(angular.element('.e-modal').parent(), function(value, key){
+              addStyle(calculateBodyHeight($(window).height(), value.id), value.id);
+            });
           };
           return deferred.promise;
         };
