@@ -161,7 +161,7 @@
           });
           // Add style every time the window is resized.
           window.onresize = function(){
-            angular.forEach(angular.element('.e-modal').parent(), function(value, key){
+            angular.forEach(angular.element('.modal').parent(), function(value, key){
               addStyle(calculateBodyHeight($(window).height(), value.id), value.id);
             });
           };
